@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Intel RealSense D455 Camera Macro for Gazebo Harmonic -->
+  <xacro:macro name="realsense_d455" params="parent_link *origin">
+    
+    <!-- Camera properties -->
+    <xacro:property name="d455_cam_width" value="0.124"/>
+    <xacro:property name="d455_cam_height" value="0.029"/>
+    <xacro:property name="d455_cam_depth" value="0.026"/>
+    <xacro:property name="d455_cam_mass" value="0.116"/>
+    
+    <!-- Camera Link -->
+    <link name="camera_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${d455_cam_depth} ${d455_cam_width} ${d455_cam_height}"/>
+        </geometry>
+        <material name="camera_material">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${d455_cam_depth} ${d455_cam_width} ${d455_cam_height}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${d455_cam_mass}"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+      </inertial>
+    </link>
+
+    <!-- Joint connecting camera to parent -->
+    <joint name="camera_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="camera_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+
+    <!-- Optical frames for ROS conventions -->
+    <link name="camera_depth_frame"/>
+    <joint name="camera_depth_joint" type="fixed">
+      <parent link="camera_link"/>
+      <child link="camera_depth_frame"/>
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <link name="camera_color_frame"/>
+    <joint name="camera_color_joint" type="fixed">
+      <parent link="camera_link"/>
+      <child link="camera_color_frame"/>
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- Gazebo Harmonic Sensor Configuration -->
+    <gazebo reference="camera_link">
+      <!-- RGB Camera -->
+      <sensor name="d455_color" type="camera">
+        <update_rate>30</update_rate>
+        <topic>/camera/image_raw</topic>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <camera>
+          <horizontal_fov>1.5009</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10.0</far>
+          </clip>
+        </camera>
+      </sensor>
+      
+      <!-- Depth Camera -->
+      <sensor name="d455_depth" type="depth_camera">
+        <update_rate>30</update_rate>
+        <topic>/camera/depth_image</topic>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <camera>
+          <horizontal_fov>1.5009</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>R_FLOAT32</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10.0</far>
+          </clip>
+        </camera>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

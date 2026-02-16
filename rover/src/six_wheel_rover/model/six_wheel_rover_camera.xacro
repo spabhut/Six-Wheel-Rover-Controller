@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot name="six_wheel_rover_camera" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- 1. INCLUDES                                                        -->
+  <xacro:include filename="six_wheel_rover.xacro"/>
+  <xacro:include filename="camera.xacro"/>
+
+  <!-- 2. INSTANTIATION                                                   -->
+  <xacro:six_wheel_rover />
+  <xacro:realsense_d455 parent_link="base_link">
+    <origin xyz="0.48 0 0.265" rpy="0 0 0"/>
+  </xacro:realsense_d455>
+
+</robot>

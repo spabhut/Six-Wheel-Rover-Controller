@@ -1,0 +1,144 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="rover_world">
+    
+    <!-- 1. Physics Engine Plugin -->
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    
+    <!-- 2. Sensors Plugin (CRITICAL for Camera) -->
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    
+    <!-- 3. User Commands (for moving things in GUI) -->
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    
+    <!-- 4. Scene Broadcaster (for GUI updates) -->
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+
+    <!-- Physics Parameters -->
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Scene Lighting -->
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <!-- Sun -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sun</uri>
+    </include>
+    
+    <!-- Ground Plane -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane</uri>
+    </include>
+    
+    <!-- Wall 1 - Front -->
+    <model name="wall_front">
+      <static>true</static>
+      <link name="link">
+        <pose>3 0 1 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.2 8 2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 8 2</size></box></geometry>
+          <material><diffuse>0.8 0.2 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Wall 2 - Left -->
+    <model name="wall_left">
+      <static>true</static>
+      <link name="link">
+        <pose>0 4 1 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>6 0.2 2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>6 0.2 2</size></box></geometry>
+          <material><diffuse>0.2 0.8 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Wall 3 - Right -->
+    <model name="wall_right">
+      <static>true</static>
+      <link name="link">
+        <pose>0 -4 1 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>6 0.2 2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>6 0.2 2</size></box></geometry>
+          <material><diffuse>0.2 0.2 0.8 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Tall Box 1 -->
+    <model name="tall_box_1">
+      <static>true</static>
+      <link name="link">
+        <pose>1.5 2 0.75 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.5 0.5 1.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 0.5 1.5</size></box></geometry>
+          <material><diffuse>0.8 0.8 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Medium Box 1 -->
+    <model name="medium_box_1">
+      <static>true</static>
+      <link name="link">
+        <pose>1.5 -2 0.5 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.6 0.6 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.6 0.6 1.0</size></box></geometry>
+          <material><diffuse>0.8 0.5 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+    <!-- Cylinder Obstacle -->
+    <model name="cylinder_1">
+      <static>true</static>
+      <link name="link">
+        <pose>0.5 -1 0.6 0 0 0</pose>
+        <collision name="collision">
+          <geometry><cylinder><radius>0.3</radius><length>1.2</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.3</radius><length>1.2</length></cylinder></geometry>
+          <material><diffuse>0.2 0.8 0.8 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    
+  </world>
+</sdf>
