@@ -49,9 +49,9 @@ class Teleop(Node):
                 elif key == 's':
                     twist.linear.x = -MAX_LIN_VEL
                 elif key == 'a':
-                    twist.angular.z = MAX_ANG_VEL
-                elif key == 'd':
                     twist.angular.z = -MAX_ANG_VEL
+                elif key == 'd':
+                    twist.angular.z = MAX_ANG_VEL
                 elif key == ' ':
                     twist.linear.x = 0.0
                     twist.angular.z = 0.0
