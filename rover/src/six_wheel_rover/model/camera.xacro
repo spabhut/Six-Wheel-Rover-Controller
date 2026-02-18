@@ -62,6 +62,7 @@
       <sensor name="d455_color" type="camera">
         <update_rate>30</update_rate>
         <topic>/camera/image_raw</topic>
+        <gz_frame_id>camera_link</gz_frame_id>
         <always_on>true</always_on>
         <visualize>true</visualize>
         <camera>
@@ -82,6 +83,7 @@
       <sensor name="d455_depth" type="depth_camera">
         <update_rate>30</update_rate>
         <topic>/camera/depth_image</topic>
+        <gz_frame_id>camera_link</gz_frame_id>
         <always_on>true</always_on>
         <visualize>true</visualize>
         <camera>
