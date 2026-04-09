@@ -19,7 +19,7 @@ def generate_launch_description():
     rviz_config_file = os.path.join(pkg_dir, 'rviz', 'rover.rviz')
 
     # Define World file path
-    world_file = os.path.join(pkg_dir, 'worlds', 'empty.world')
+    world_file = os.path.join(pkg_dir, 'worlds', 'rover.world')
 
     rsp_node = Node(
         package='robot_state_publisher',
