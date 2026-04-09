@@ -61,7 +61,7 @@ mkdir -p ~/rover_ws/src
 cd ~/rover_ws/src
 
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/rover.git
+git clone https://github.com/spabhut/ProjectVanguard.git
 
 # Install missing dependencies automatically
 cd ~/rover_ws
@@ -72,8 +72,6 @@ rosdep install --from-paths src -y --ignore-src
 # Build the workspace
 colcon build --symlink-install
 ```
-
-> **Note:** Replace `YOUR_USERNAME` with the actual GitHub username where this repo is hosted.
 
 ---
 
