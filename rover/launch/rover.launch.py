@@ -18,6 +18,9 @@ def generate_launch_description():
     # Define RViz config path
     rviz_config_file = os.path.join(pkg_dir, 'rviz', 'rover.rviz')
 
+    # Define World file path
+    world_file = os.path.join(pkg_dir, 'worlds', 'empty.world')
+
     rsp_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -25,13 +28,16 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_desc, 'use_sim_time': True}]
     )
 
+    # Gazebo Classic (Now pointing to your custom world)
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')
         ),
-        launch_arguments={'use_sim_time': 'true'}.items()
+        launch_arguments={
+            'use_sim_time': 'true',
+            'world': world_file
+        }.items()
     )
-
     spawn_node = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
