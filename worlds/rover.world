@@ -58,10 +58,10 @@
             </plane>
           </geometry>
           <material>
-            <script>
-              <uri>file://media/materials/scripts/gazebo.material</uri>
-              <name>Gazebo/Grey</name>
-            </script>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
           </material>
         </visual>
       </link>
@@ -81,8 +81,12 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>10.2 0.2 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Orange</name></script></material>
+          <material>
+            <ambient>1.0 0.5 0.0 1</ambient>
+            <diffuse>1.0 0.4 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -97,8 +101,12 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>10.2 0.2 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Orange</name></script></material>
+          <material>
+            <ambient>1.0 0.5 0.0 1</ambient>
+            <diffuse>1.0 0.4 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -113,8 +121,12 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>0.2 10.2 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Orange</name></script></material>
+          <material>
+            <ambient>1.0 0.5 0.0 1</ambient>
+            <diffuse>1.0 0.4 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -129,64 +141,110 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>0.2 10.2 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Orange</name></script></material>
+          <material>
+            <ambient>1.0 0.5 0.0 1</ambient>
+            <diffuse>1.0 0.4 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
 
     <!-- ═══════════════════════════════════════════════════ -->
-    <!--               INNER PARTITION WALLS                 -->
+    <!--          INNER PARTITION WALLS (with passages)      -->
+    <!--                                                     -->
+    <!--  Horizontal divider at y=1.5 split into 3 segments  -->
+    <!--  with TWO 1.5 m gaps so all compartments reachable: -->
+    <!--                                                     -->
+    <!--  [wall_h_far_left]  GAP-L  [wall_h_mid]  GAP-C  [wall_h_right] -->
+    <!--  x: -5 → -3.5       -3.5→-2.0   -2.0→-0.75    -0.75→0.75   0.75→5 -->
+    <!--                                                     -->
+    <!--  GAP-L (1.5 m) gives access to the upper-left area  -->
+    <!--  GAP-C (1.5 m) is the central passage               -->
     <!-- ═══════════════════════════════════════════════════ -->
 
-    <!-- Horizontal corridor divider (gap in the middle for passage) -->
-    <model name="inner_wall_h1_left">
+    <!-- Far-left segment: x = -5.0 to -3.5  (length 1.5 m) -->
+    <model name="wall_h_far_left">
       <static>true</static>
-      <pose>-2.5 1.5 0.5 0 0 0</pose>
+      <pose>-4.25 1.5 0.5 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>4.8 0.2 1.0</size></box></geometry>
+          <geometry><box><size>1.5 0.2 1.0</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>4.8 0.2 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Blue</name></script></material>
+          <geometry><box><size>1.5 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.0 0.2 1.0 1</ambient>
+            <diffuse>0.0 0.2 1.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
 
-    <model name="inner_wall_h1_right">
+    <!-- Middle segment: x = -2.0 to -0.75  (length 1.25 m) -->
+    <model name="wall_h_mid">
       <static>true</static>
-      <pose>2.5 1.5 0.5 0 0 0</pose>
+      <pose>-1.375 1.5 0.5 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>4.8 0.2 1.0</size></box></geometry>
+          <geometry><box><size>1.25 0.2 1.0</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>4.8 0.2 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Blue</name></script></material>
+          <geometry><box><size>1.25 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.0 0.2 1.0 1</ambient>
+            <diffuse>0.0 0.2 1.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
 
-    <!-- Vertical dead-end wall (creates a pocket) -->
+    <!-- Right segment: x = 0.75 to 5.0  (length 4.25 m) -->
+    <model name="wall_h_right">
+      <static>true</static>
+      <pose>2.875 1.5 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>4.25 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>4.25 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.0 0.2 1.0 1</ambient>
+            <diffuse>0.0 0.2 1.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Vertical wall dividing upper area: x=-2.0, y from 1.5 to 5.0 -->
     <model name="inner_wall_v1">
       <static>true</static>
-      <pose>-2.0 3.0 0.5 0 0 0</pose>
+      <pose>-2.0 3.25 0.5 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.2 3.8 1.0</size></box></geometry>
+          <geometry><box><size>0.2 3.5 1.0</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.2 3.8 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Blue</name></script></material>
+          <geometry><box><size>0.2 3.5 1.0</size></box></geometry>
+          <material>
+            <ambient>0.0 0.2 1.0 1</ambient>
+            <diffuse>0.0 0.2 1.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
 
-    <!-- Small L-wall in bottom-right quadrant -->
+    <!-- Vertical wall in lower-right: x=2.5, y from -3.9 to -1.1 -->
     <model name="inner_wall_v2">
       <static>true</static>
       <pose>2.5 -2.5 0.5 0 0 0</pose>
@@ -196,12 +254,17 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>0.2 2.8 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Blue</name></script></material>
+          <material>
+            <ambient>0.0 0.2 1.0 1</ambient>
+            <diffuse>0.0 0.2 1.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
 
+    <!-- Horizontal cap of the lower-right pocket: y=-1.1, x from 2.5 to 4.9 -->
     <model name="inner_wall_h2">
       <static>true</static>
       <pose>3.75 -1.1 0.5 0 0 0</pose>
@@ -211,8 +274,12 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>2.3 0.2 1.0</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Blue</name></script></material>
+          <material>
+            <ambient>0.0 0.2 1.0 1</ambient>
+            <diffuse>0.0 0.2 1.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -230,8 +297,12 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Red</name></script></material>
+          <material>
+            <ambient>1.0 0.0 0.0 1</ambient>
+            <diffuse>0.9 0.0 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -245,8 +316,12 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>0.6 0.3 0.5</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Red</name></script></material>
+          <material>
+            <ambient>1.0 0.0 0.0 1</ambient>
+            <diffuse>0.9 0.0 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -260,8 +335,12 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>0.7 0.7 0.6</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Red</name></script></material>
+          <material>
+            <ambient>1.0 0.0 0.0 1</ambient>
+            <diffuse>0.9 0.0 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -275,8 +354,12 @@
         </collision>
         <visual name="visual">
           <geometry><box><size>0.4 0.8 0.4</size></box></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Red</name></script></material>
+          <material>
+            <ambient>1.0 0.0 0.0 1</ambient>
+            <diffuse>0.9 0.0 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -294,8 +377,12 @@
         </collision>
         <visual name="visual">
           <geometry><cylinder><radius>0.25</radius><length>0.8</length></cylinder></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Green</name></script></material>
+          <material>
+            <ambient>0.0 0.7 0.0 1</ambient>
+            <diffuse>0.0 0.7 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -309,8 +396,12 @@
         </collision>
         <visual name="visual">
           <geometry><cylinder><radius>0.2</radius><length>0.8</length></cylinder></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Green</name></script></material>
+          <material>
+            <ambient>0.0 0.7 0.0 1</ambient>
+            <diffuse>0.0 0.7 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -324,8 +415,12 @@
         </collision>
         <visual name="visual">
           <geometry><cylinder><radius>0.3</radius><length>0.8</length></cylinder></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Green</name></script></material>
+          <material>
+            <ambient>0.0 0.7 0.0 1</ambient>
+            <diffuse>0.0 0.7 0.0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -343,8 +438,12 @@
         </collision>
         <visual name="visual">
           <geometry><sphere><radius>0.3</radius></sphere></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Purple</name></script></material>
+          <material>
+            <ambient>0.6 0.0 0.8 1</ambient>
+            <diffuse>0.5 0.0 0.7 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>
@@ -358,8 +457,12 @@
         </collision>
         <visual name="visual">
           <geometry><sphere><radius>0.2</radius></sphere></geometry>
-          <material><script><uri>file://media/materials/scripts/gazebo.material</uri>
-            <name>Gazebo/Purple</name></script></material>
+          <material>
+            <ambient>0.6 0.0 0.8 1</ambient>
+            <diffuse>0.5 0.0 0.7 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
         </visual>
       </link>
     </model>

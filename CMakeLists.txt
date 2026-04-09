@@ -35,4 +35,10 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  scripts/teleop_key.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME teleop_key
+)
+
 ament_package()
