@@ -61,7 +61,7 @@ mkdir -p ~/rover_ws/src
 cd ~/rover_ws/src
 
 # Clone the repository
-git clone https://github.com/spabhut/ProjectVanguard.git
+git clone https://github.com/spabhut/ProjectVanguard.git rover
 
 # Install missing dependencies automatically
 cd ~/rover_ws
