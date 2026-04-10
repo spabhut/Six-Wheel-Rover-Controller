@@ -14,19 +14,16 @@ def generate_launch_description():
 
     rviz_config_file = os.path.join(pkg_dir, 'rviz', 'rover.rviz')
 
-    # Robot State Publisher — use_sim_time is now FALSE
     rsp_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
         parameters=[{
             'robot_description': robot_desc,
-            'use_sim_time': False          # CHANGED
+            'use_sim_time': False
         }]
     )
 
-    # Joint State Publisher — publishes wheel joint states on real HW
-    # Replace with your actual motor driver node once available
     jsp_node = Node(
         package='joint_state_publisher',
         executable='joint_state_publisher',
@@ -35,7 +32,6 @@ def generate_launch_description():
         parameters=[{'use_sim_time': False}]
     )
 
-    # Intel RealSense D455
     realsense_node = Node(
         package='realsense2_camera',
         executable='realsense2_camera_node',
@@ -43,7 +39,7 @@ def generate_launch_description():
         namespace='d455',
         output='screen',
         parameters=[{
-            'serial_no': '',               # leave blank to auto-detect
+            'serial_no': '',
             'enable_depth': True,
             'enable_color': True,
             'depth_width': 640,
@@ -54,27 +50,25 @@ def generate_launch_description():
             'color_fps': 30,
             'align_depth.enable': True,
             'pointcloud.enable': True,
-            'enable_gyro': True,           # D455 has IMU
+            'enable_gyro': True,
             'enable_accel': True,
             'unite_imu_method': 'linear_interpolation',
             'use_sim_time': False
         }]
     )
 
-    # RViz2
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
         output='screen',
         arguments=['-d', rviz_config_file],
-        parameters=[{'use_sim_time': False}]    # CHANGED
+        parameters=[{'use_sim_time': False}]
     )
 
     return LaunchDescription([
         rsp_node,
-        jsp_node,          # NEW
-        realsense_node,    # NEW
+        jsp_node,
+        realsense_node,
         rviz_node,
-        # REMOVED: gazebo, spawn_node
     ])

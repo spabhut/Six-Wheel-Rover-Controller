@@ -16,7 +16,7 @@ def generate_launch_description():
         executable='pointcloud_to_laserscan_node',
         name='pointcloud_to_laserscan',
         remappings=[
-            ('cloud_in', '/d455/depth/color/points'),   # CHANGED — real HW topic
+            ('cloud_in', '/d455/depth/color/points'),
             ('scan',     '/scan')
         ],
         parameters=[{
@@ -26,7 +26,7 @@ def generate_launch_description():
             'max_height': 0.5,
             'range_min': 0.2,
             'range_max': 8.0,
-            'use_sim_time': False          # CHANGED
+            'use_sim_time': False
         }]
     )
 
@@ -35,7 +35,7 @@ def generate_launch_description():
             os.path.join(nav2_bringup_dir, 'launch', 'navigation_launch.py')
         ),
         launch_arguments={
-            'use_sim_time': 'false',       # CHANGED
+            'use_sim_time': 'false',
             'params_file': params_file
         }.items()
     )

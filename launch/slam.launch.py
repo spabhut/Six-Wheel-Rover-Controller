@@ -7,16 +7,17 @@ def generate_launch_description():
         'subscribe_depth': True,
         'subscribe_rgb': True,
         'approx_sync': True,
-        'wait_for_transform': 0.5,         # slightly longer for real TF
+        'wait_for_transform': 0.5,
         'Grid/RangeMax': '5.0',
-        'use_sim_time': False              # CHANGED
+        'use_sim_time': False
     }]
 
-    # Topic names now match the realsense2_camera_node's namespace='d455'
+    # Topics based on actual rostopic list output
+    # Camera has double namespace /d455/d455/... due to name+namespace combo
     remappings = [
-        ('rgb/image',        '/d455/color/image_raw'),      # CHANGED
-        ('rgb/camera_info',  '/d455/color/camera_info'),    # CHANGED
-        ('depth/image',      '/d455/depth/image_rect_raw'), # CHANGED
+        ('rgb/image',        '/d455/d455/color/image_raw'),
+        ('rgb/camera_info',  '/d455/d455/color/camera_info'),
+        ('depth/image',      '/d455/d455/depth/image_rect_raw'),
         ('odom',             '/odom'),
         ('grid_map',         '/map')
     ]
