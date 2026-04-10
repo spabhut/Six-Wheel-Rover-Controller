@@ -80,7 +80,7 @@ Visualization Manager:
       Update Interval: 0
       Value: true
 
-    # ── D455 Color Image  (FIXED: was /d455/image_raw) ──────────
+    # ── D455 Color Image ─────────────────────────────────────────
     - Class: rviz_default_plugins/Image
       Enabled: true
       Max Value: 1
@@ -94,10 +94,10 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /d455/color/image_raw          # CHANGED from /d455/image_raw
+        Value: /d455/d455/color/image_raw
       Value: true
 
-    # ── D455 Depth Image (NEW) ───────────────────────────────────
+    # ── D455 Depth Image ─────────────────────────────────────────
     - Class: rviz_default_plugins/Image
       Enabled: true
       Max Value: 1
@@ -111,10 +111,10 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /d455/depth/image_rect_raw
+        Value: /d455/d455/depth/image_rect_raw
       Value: true
 
-    # ── D455 PointCloud  (FIXED: was /d455/points) ──────────────
+    # ── D455 PointCloud ──────────────────────────────────────────
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -143,12 +143,12 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /d455/depth/color/points       # CHANGED from /d455/points
+        Value: /d455/depth/color/points
       Use Fixed Frame: true
       Use rainbow: false
       Value: true
 
-    # ── LaserScan derived from pointcloud (NEW) ──────────────────
+    # ── LaserScan derived from pointcloud ────────────────────────
     - Alpha: 1
       Class: rviz_default_plugins/LaserScan
       Color: 255; 50; 0
@@ -171,7 +171,7 @@ Visualization Manager:
       Use Fixed Frame: true
       Value: true
 
-    # ── RTAB-Map occupancy map (NEW) ─────────────────────────────
+    # ── RTAB-Map occupancy map ───────────────────────────────────
     - Alpha: 0.7
       Class: rviz_default_plugins/Map
       Color Scheme: map
@@ -194,7 +194,7 @@ Visualization Manager:
       Use Timestamp: false
       Value: true
 
-    # ── IMU visual (NEW — D455 built-in IMU) ─────────────────────
+    # ── IMU visual (D455 built-in IMU) ───────────────────────────
     - Acceleration properties:
         Alpha: 0.5
         Axes Length: 0.1
@@ -228,12 +228,12 @@ Visualization Manager:
         Value: /d455/imu
       Value: true
 
-    # ── Nav2 global costmap (NEW) ────────────────────────────────
+    # ── Nav2 global costmap (disabled by default) ────────────────
     - Alpha: 0.3
       Class: rviz_default_plugins/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: false                          # off by default — enable when needed
+      Enabled: false
       Name: Global Costmap
       Topic:
         Depth: 5
@@ -244,7 +244,7 @@ Visualization Manager:
         Value: /global_costmap/costmap
       Value: false
 
-    # ── Nav2 current path (NEW) ──────────────────────────────────
+    # ── Nav2 current path ────────────────────────────────────────
     - Alpha: 1
       Buffer Length: 1
       Class: rviz_default_plugins/Path
@@ -276,7 +276,7 @@ Visualization Manager:
 
   Global Options:
     Background Color: 30; 30; 30
-    Fixed Frame: base_link
+    Fixed Frame: odom
     Frame Rate: 30
 
   Name: root
@@ -329,7 +329,7 @@ Visualization Manager:
       Name: Current View
       Near Clip Distance: 0.01
       Pitch: 0.6
-      Target Frame: base_link              # CHANGED from <Fixed Frame> — follows rover
+      Target Frame: base_link
       Value: Orbit (rviz)
       Yaw: 0.785
     Saved: ~

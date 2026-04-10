@@ -66,18 +66,10 @@ def generate_launch_description():
         parameters=[{'use_sim_time': False}]
     )
 
-    static_odom_node = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_odom_publisher',
-        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_link'],
-        parameters=[{'use_sim_time': False}]
-    )
-
     return LaunchDescription([
         rsp_node,
         jsp_node,
         realsense_node,
         rviz_node,
-        static_odom_node
+        # static_odom REMOVED — rtabmap publishes odom->base_link itself
     ])
