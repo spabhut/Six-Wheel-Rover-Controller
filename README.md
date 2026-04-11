@@ -1,18 +1,17 @@
-# 6-Wheeled Rover Simulation
+# 6-Wheeled Rover — Hardware (Jetson Orin + RealSense D455)
 
-A complete ROS 2 Humble and Gazebo Classic simulation package for a 6-wheeled skid-steer rover equipped with an Intel RealSense D455 depth camera.
+A ROS 2 Humble package for a 6-wheeled skid-steer rover running on a **NVIDIA Jetson Orin** with an **Intel RealSense D455** depth camera. This branch has no Gazebo simulation — it runs fully on real hardware.
 
 ## ⚠️ Prerequisites
 
-This package requires **Ubuntu 22.04 LTS**. If you are on a different OS, please use a dual-boot setup, virtual machine, or WSL2.
+- NVIDIA Jetson Orin with JetPack 5.x or 6.x
+- Ubuntu 22.04 LTS
+- Intel RealSense D455 connected via USB 3.x
+- `librealsense2` already installed on the Orin
 
 ---
 
-## 1. System Setup (For First-Time Users)
-
-If you do not have ROS 2 Humble or Gazebo installed, run the following commands in your terminal to set up your environment.
-
-### Install ROS 2 Humble
+## 1. Install ROS 2 Humble
 
 ```bash
 locale  # check for UTF-8
@@ -38,87 +37,134 @@ sudo apt install ros-humble-desktop
 sudo apt install ros-dev-tools
 ```
 
-### Install Gazebo Classic & ROS 2 Integration
+---
+
+## 2. Install Dependencies
 
 ```bash
-sudo apt install gazebo
-sudo apt install ros-humble-gazebo-ros-pkgs
-sudo apt install ros-humble-xacro
-```
-
-### Install RTAB-Map (For 3D SLAM)
-
-```bash
-sudo apt install ros-humble-rtabmap-ros
-```
-
-### Install Nav2 (For Autonomous Navigation)
-
-```bash
-sudo apt update
-sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-pointcloud-to-laserscan
+sudo apt install \
+  ros-humble-xacro \
+  ros-humble-joint-state-publisher \
+  ros-humble-robot-state-publisher \
+  ros-humble-realsense2-camera \
+  ros-humble-realsense2-description \
+  ros-humble-rtabmap-ros \
+  ros-humble-navigation2 \
+  ros-humble-nav2-bringup \
+  ros-humble-pointcloud-to-laserscan \
+  ros-humble-rviz-imu-plugin
 ```
 
 ---
 
-## 2. Workspace Setup
+## 3. Verify Camera
 
-Once ROS 2 is installed, set up your workspace and clone this repository.
+Before running anything, confirm the D455 is detected:
 
 ```bash
-# Source the base ROS 2 installation
+rs-enumerate-devices        # should list D455 serial number
+rs-depth                    # quick live depth preview
+```
+
+---
+
+## 4. Workspace Setup
+
+```bash
+# Source ROS 2
 source /opt/ros/humble/setup.bash
 
-# Create a workspace
+# Create workspace
 mkdir -p ~/rover_ws/src
 cd ~/rover_ws/src
 
-# Clone the repository
-git clone https://github.com/spabhut/ProjectVanguard.git rover
+# Clone the hardware branch
+git clone -b hardware https://github.com/spabhut/ProjectVanguard.git rover
 
-# Install missing dependencies automatically
+# Install any remaining dependencies
 cd ~/rover_ws
-rosdep init
-rosdep update
 rosdep install --from-paths src -y --ignore-src
 
-# Build the workspace
+# Build
 colcon build --symlink-install
+```
+
+Auto-source so every new terminal is ready:
+
+```bash
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+echo "source ~/rover_ws/install/setup.bash" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ---
 
-## 3. Running the Simulation
+## 5. Running on Hardware
 
-Every time you open a new terminal, source the workspace first:
+Open **3 separate terminals** and source the workspace in each if not auto-sourced:
 
 ```bash
-cd ~/rover_ws
-source install/setup.bash
+source ~/rover_ws/install/setup.bash
 ```
 
-You will need **three separate terminals** — one for Gazebo, one for SLAM, and one for Nav2.
-
-### Terminal 1 — Gazebo Simulation
+### Terminal 1 — Robot + Camera + RViz
 
 ```bash
-cd ~/rover_ws && source install/setup.bash
 ros2 launch rover rover.launch.py
 ```
 
-### Terminal 2 — SLAM (RTAB-Map)
+Starts: Robot State Publisher, Joint State Publisher, RealSense D455 node, RViz2.
+
+### Terminal 2 — SLAM (wait for Terminal 1 to fully start first)
 
 ```bash
-cd ~/rover_ws && source install/setup.bash
 ros2 launch rover slam.launch.py
 ```
+
+Starts: RTAB-Map 3D SLAM using live D455 RGB-D feed.
 
 ### Terminal 3 — Nav2 Navigation Stack
 
 ```bash
-cd ~/rover_ws && source install/setup.bash
 ros2 launch rover nav2.launch.py
 ```
+
+Starts: pointcloud → laserscan conversion + Nav2 navigation stack.
+
+### Optional — Keyboard Teleoperation
+
+```bash
+ros2 run rover teleop_key
+```
+
+---
+
+## 6. Updating the Repository
+
+To pull the latest changes from GitHub:
+
+```bash
+cd ~/rover_ws/src/rover
+git pull origin hardware
+
+cd ~/rover_ws
+colcon build --symlink-install
+source install/setup.bash
+```
+
+---
+
+## Key Topic Map
+
+| Data | Topic |
+|---|---|
+| Color image | `/d455/d455/color/image_raw` |
+| Depth image | `/d455/d455/depth/image_rect_raw` |
+| Point cloud | `/d455/depth/color/points` |
+| IMU | `/d455/imu` |
+| Laser scan (derived) | `/scan` |
+| Velocity command | `/cmd_vel` |
+| Map | `/map` |
 
 ---
 
@@ -131,43 +177,43 @@ rover/
 ├── README.md
 ├── config/
 │   └── nav2_params.yaml      # Nav2 navigation parameters
-├── include/
-│   └── rover/                # C++ headers (if any)
 ├── launch/
-│   ├── rover.launch.py       # Gazebo simulation launch
-│   ├── slam.launch.py        # SLAM (RTAB-Map) launch
-│   └── nav2.launch.py        # Nav2 navigation stack launch
+│   ├── rover.launch.py       # Robot + RealSense D455 + RViz
+│   ├── slam.launch.py        # RTAB-Map SLAM
+│   └── nav2.launch.py        # Nav2 navigation stack
 ├── rviz/
 │   └── rover.rviz            # Pre-configured RViz2 layout
 ├── scripts/
 │   └── teleop_key.py         # Keyboard teleoperation script
-├── src/                      # C++ source files (if any)
-├── urdf/
-│   └── rover.xacro           # Robot description with D455 camera
-└── worlds/
-    └── rover.world           # Custom Gazebo world
+└── urdf/
+    └── rover.xacro           # Robot description (no Gazebo plugins)
 ```
 
 ---
 
 ## Troubleshooting
 
-**Gazebo doesn't open / crashes immediately**
+**Camera not detected**
 ```bash
-# Make sure Gazebo is properly sourced
-source /usr/share/gazebo/setup.sh
+rs-enumerate-devices    # check USB 3.x connection
+ros2 topic list | grep d455    # confirm topics are publishing
 ```
 
-**`colcon build` fails with missing packages**
+**TF tree errors in SLAM**
 ```bash
-# Re-run rosdep to catch any remaining dependencies
+ros2 run tf2_tools view_frames    # visualize full TF tree
+ros2 run tf2_ros tf2_echo odom base_link    # check odom->base_link
+```
+
+**colcon build fails**
+```bash
 rosdep install --from-paths src -y --ignore-src
+colcon build --symlink-install 2>&1 | cat    # see full error
 ```
 
 **RViz shows no robot model**
 ```bash
-# Confirm the robot_description topic is being published
-ros2 topic echo /robot_description
+ros2 topic echo /robot_description    # confirm URDF is published
 ```
 
 ---
