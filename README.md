@@ -1,17 +1,18 @@
-# 6-Wheeled Rover
+# AgileX Limo - Hardware Deployment
 
-A ROS 2 Humble package for a 6-wheeled skid-steer rover running on a **NVIDIA Jetson Orin** with an **Intel RealSense D455** depth camera. This branch has no Gazebo simulation — it runs fully on real hardware.
+A ROS 2 Humble workspace for running the physical **AgileX Limo** robot. This setup completely bypasses Gazebo simulation to run SLAM (RTAB-Map) and Navigation (Nav2) directly on the physical hardware using the onboard camera, LiDAR, and motor controllers.
 
 ## ⚠️ Prerequisites
 
-- NVIDIA Jetson Orin with JetPack 5.x or 6.x
+- Physical AgileX Limo robot
 - Ubuntu 22.04 LTS
-- Intel RealSense D455 connected via USB 3.x
-- `librealsense2` already installed on the Orin
+- ROS 2 Humble
 
 ---
 
 ## 1. Install ROS 2 Humble
+
+*(If you already have ROS 2 Humble installed, skip to Step 2).*
 
 ```bash
 locale  # check for UTF-8
@@ -39,36 +40,42 @@ sudo apt install ros-dev-tools
 
 ---
 
-## 2. Install Dependencies
+## 2. Install Hardware & SLAM Dependencies
+
+Install the core ROS packages, localization tools, teleop utilities, and the C++ serial libraries required for the Limo's motor drivers.
 
 ```bash
 sudo apt install \
+  build-essential cmake libboost-all-dev libserial-dev \
   ros-humble-xacro \
   ros-humble-joint-state-publisher \
   ros-humble-robot-state-publisher \
-  ros-humble-realsense2-camera \
-  ros-humble-realsense2-description \
   ros-humble-rtabmap-ros \
   ros-humble-navigation2 \
   ros-humble-nav2-bringup \
-  ros-humble-pointcloud-to-laserscan \
-  ros-humble-rviz-imu-plugin
+  ros-humble-robot-localization \
+  ros-humble-diagnostic-updater \
+  ros-humble-teleop-twist-keyboard \
+  ros-humble-teleop-twist-joy \
+  ros-humble-joy
 ```
 
 ---
 
-## 3. Verify Camera
+## 3. Configure Serial Permissions (Crucial for Hardware)
 
-Before running anything, confirm the D455 is detected:
+To allow the ROS 2 driver to communicate with the physical Limo motor controllers, your user must be part of the `dialout` group.
 
 ```bash
-rs-enumerate-devices        # should list D455 serial number
-rs-depth                    # quick live depth preview
+sudo usermod -a -G dialout $USER
 ```
+**⚠️ Note:** You *must* log out and log back in (or reboot) for this permission change to take effect before launching the robot.
 
 ---
 
 ## 4. Workspace Setup
+
+Create the workspace and clone both the Limo hardware drivers and your custom Vanguard rover package.
 
 ```bash
 # Source ROS 2
@@ -78,14 +85,17 @@ source /opt/ros/humble/setup.bash
 mkdir -p ~/rover_ws/src
 cd ~/rover_ws/src
 
-# Clone the hardware branch
-git clone -b hardware https://github.com/spabhut/ProjectVanguard.git rover
+# 1. Clone the AgileX Limo drivers (hardware branch)
+git clone -b hardware https://github.com/spabhut/limo_ros2.git
 
-# Install any remaining dependencies
+# 2. Clone the Project Vanguard hardware package (limo branch)
+git clone -b limo https://github.com/spabhut/ProjectVanguard.git rover
+
+# Install any remaining ROS package dependencies
 cd ~/rover_ws
 rosdep install --from-paths src -y --ignore-src
 
-# Build
+# Build the workspace
 colcon build --symlink-install
 ```
 
@@ -101,123 +111,61 @@ source ~/.bashrc
 
 ## 5. Running on Hardware
 
-Open **3 separate terminals** and source the workspace in each if not auto-sourced:
+Open **3 separate terminals** (ensure the workspace is sourced in each if not auto-sourced).
 
+### Terminal 1 — Hardware Bringup (Motors & Sensors)
+Start the physical robot drivers. This talks to the chassis, camera, and LiDAR.
 ```bash
-source ~/rover_ws/install/setup.bash
+ros2 launch limo_base start_limo.launch.py
 ```
 
-### Terminal 1 — Robot + Camera + RViz
+### Terminal 2 — SLAM & State Publisher
+*(Wait for Terminal 1 to finish launching before running this).*
 
-```bash
-ros2 launch rover rover.launch.py
-```
-
-Starts: Robot State Publisher, Joint State Publisher, RealSense D455 node, RViz2.
-
-### Terminal 2 — SLAM (wait for Terminal 1 to fully start first)
-
+Start RTAB-Map to build the map using live hardware data. Ensure your `slam.launch.py` has `use_sim_time: False` and loads the robot URDF.
 ```bash
 ros2 launch rover slam.launch.py
 ```
 
-Starts: RTAB-Map 3D SLAM using live D455 RGB-D feed.
-
 ### Terminal 3 — Nav2 Navigation Stack
-
+Start the Nav2 stack for autonomous routing and obstacle avoidance.
 ```bash
 ros2 launch rover nav2.launch.py
 ```
 
-Starts: pointcloud → laserscan conversion + Nav2 navigation stack.
-
-### Optional — Keyboard Teleoperation
-
+### Optional — Manual Driving Test
+To verify the motor controllers are receiving commands before turning on Nav2:
 ```bash
-ros2 run rover teleop_key
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
 ---
 
-## 6. Updating the Repository
+## Key Hardware Topic Map
 
-To pull the latest changes from GitHub:
-
-```bash
-cd ~/rover_ws/src/rover
-git pull origin hardware
-
-cd ~/rover_ws
-colcon build --symlink-install
-source install/setup.bash
-```
-
----
-
-## Key Topic Map
-
-| Data | Topic |
+| Data | Typical Limo Topic Name |
 |---|---|
-| Color image | `/d455/d455/color/image_raw` |
-| Depth image | `/d455/d455/depth/image_rect_raw` |
-| Point cloud | `/d455/depth/color/points` |
-| IMU | `/d455/imu` |
-| Laser scan (derived) | `/scan` |
+| Depth image | `/camera/depth/image_raw` |
+| RGB image | `/camera/color/image_raw` |
+| Camera Info | `/camera/depth/camera_info` |
+| Laser scan (LiDAR) | `/scan` |
+| IMU | `/imu` |
+| Odometry (Wheels) | `/odom` |
 | Velocity command | `/cmd_vel` |
 | Map | `/map` |
 
----
-
-## Package Structure
-
-```
-rover/
-├── CMakeLists.txt
-├── package.xml
-├── README.md
-├── config/
-│   └── nav2_params.yaml      # Nav2 navigation parameters
-├── launch/
-│   ├── rover.launch.py       # Robot + RealSense D455 + RViz
-│   ├── slam.launch.py        # RTAB-Map SLAM
-│   └── nav2.launch.py        # Nav2 navigation stack
-├── rviz/
-│   └── rover.rviz            # Pre-configured RViz2 layout
-├── scripts/
-│   └── teleop_key.py         # Keyboard teleoperation script
-└── urdf/
-    └── rover.xacro           # Robot description (no Gazebo plugins)
-```
+*(Note: Use `ros2 topic list` after running `start_limo.launch.py` to confirm exact camera topic names, as they can vary slightly depending on the specific camera model shipped with your Limo).*
 
 ---
 
 ## Troubleshooting
 
-**Camera not detected**
-```bash
-rs-enumerate-devices    # check USB 3.x connection
-ros2 topic list | grep d455    # confirm topics are publishing
-```
+**Serial Port/Motor Error when launching `limo_base`**
+* Did you remember to run `sudo usermod -a -G dialout $USER` and reboot?
+* Check if the port exists: `ls /dev/ttyTHS*` or `ls /dev/ttyUSB*`.
 
-**TF tree errors in SLAM**
-```bash
-ros2 run tf2_tools view_frames    # visualize full TF tree
-ros2 run tf2_ros tf2_echo odom base_link    # check odom->base_link
-```
+**SLAM freezes or shows nothing in RViz**
+* Check `slam.launch.py`. If `'use_sim_time': True` is present anywhere, change it to `False`. Simulation time will freeze real hardware setups indefinitely.
 
-**colcon build fails**
-```bash
-rosdep install --from-paths src -y --ignore-src
-colcon build --symlink-install 2>&1 | cat    # see full error
-```
-
-**RViz shows no robot model**
-```bash
-ros2 topic echo /robot_description    # confirm URDF is published
-```
-
----
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+**No Image Data**
+* Use `ros2 topic hz /camera/depth/image_raw` to see if the physical camera node is actually publishing frames.
