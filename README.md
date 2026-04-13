@@ -1,6 +1,6 @@
-# 6-Wheeled Rover Simulation
+# LIMO Rover Simulation
 
-A complete ROS 2 Humble and Gazebo Classic simulation package for a 6-wheeled skid-steer rover equipped with an Intel RealSense D455 depth camera.
+A complete ROS 2 Humble and Gazebo Classic simulation package for the LIMO rover.
 
 ## ⚠️ Prerequisites
 
